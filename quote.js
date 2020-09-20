@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $("#numElev_2, #numElev_3, #elevPriceUnit, #elevTotal, #installationFee, #total_").attr('readonly', true);
 
-    var numApp,  numFloors, numBase, numElev, maxOcc;
+    var numApp, numFloors, numBase, maxOcc;
     var prodRange = {
         type: null,
         price: null,
@@ -12,17 +12,17 @@ $(document).ready(function () {
         doCalc();
     });
 
+    
 
-    $('#standard, #premium, #excelium').on('click', function () {
-
-        var radioValue = $("input[name='radio-btn']:checked").val();          
-        if (radioValue === "s")  {
+    $('#standard, #premium, #excelium').on('click', function () {        
+        
+        if( $("#standard").prop( "checked" ) )    {
             document.getElementById('elevPriceUnit').value = (7565).toFixed(2) + " $";
-        } else if (radioValue === "p")   {
+        } else if( $("#premium").prop( "checked" ) )   {
             document.getElementById('elevPriceUnit').value = (12345).toFixed(2) + " $";
-        } else if (radioValue === "e")   {
+        } else if( $("#excelium").prop( "checked" ) )   {
             document.getElementById('elevPriceUnit').value = (15400).toFixed(2) + " $";
-        }       
+        }        
         doCalc();
     });
 
@@ -83,8 +83,8 @@ $(document).ready(function () {
     };
 
     function GetInfos() {
-        getInfoNumApp();
         getInfoNumFloors();
+        getInfoNumApp()
         getInfoNumBase();
         getInfoNumElev();
         getInfoMaxOcc();
@@ -112,6 +112,7 @@ $(document).ready(function () {
             numberApp: numApp,
             numberFloors: numFloors,
             numberBase: numBase,
+            numberElev: numElev,
             maximumOcc: maxOcc,
             productRange: prodRange,
             projectType: projectType
@@ -125,16 +126,16 @@ $(document).ready(function () {
             $('#numApp').val('');
             return true
 
-        } else if ($('#numFloors').val() < 0) {
-
-            alert("Please enter a positive number!");
-            $('#numFloors').val('');
-            return true
-
         } else if ($('#numBase').val() < 0) {
 
             alert("Please enter a positive number!");
             $('#numBase').val('');
+            return true
+
+        } else if ($('#numFloors').val() < 0) {
+
+            alert("Please enter a positive number!");
+            $('#numFloors').val('');
             return true
 
         } else if ($('#numComp').val() < 0) {
@@ -180,7 +181,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: "POST",
-            //url: 'http://localhost:3000/api/quoteCalculation/', //for local testing
+            // url: 'http://localhost:3000/api/quoteCalculation/', //for local testing
             url: 'https://rocketelevators-quote.herokuapp.com/api/quoteCalculation/',
             data: JSON.stringify(formData),
             contentType: "application/json; charset=utf-8",
@@ -197,13 +198,14 @@ $(document).ready(function () {
     function doCalc() {
         if ($('#residential').hasClass('active') && !negativeValues() && $('#numApp').val() && $('#numFloors').val()) {
             apiCall('residential')
-        } else if ($('#commercial').hasClass('active') && !negativeValues() && $('#numElev').val()  {
-            apiCall('corporate')
+        } else if ($('#commercial').hasClass('active') && !negativeValues() && $('#numElev').val()) {
+            apiCall('commercial')
         } else if ($('#corporate').hasClass('active') && !negativeValues() && $('#numFloors').val() && $('#numBase').val() && $('#maxOcc').val()) {
-            apiCall('hybrid')
+            apiCall('corporate')
         } else if ($('#hybrid').hasClass('active') && !negativeValues() && $('#numFloors').val() && $('#numBase').val() && $('#maxOcc').val()) {
             apiCall('hybrid')
-        } else {
+        } 
+        else {
             emptyElevatorsNumberAndPricesFields();
         };
     };
